@@ -1,0 +1,9 @@
+# Entorno virtual
+venv/
+
+# Archivos CSV
+keywords.csv
+keywords-filter.csv
+
+# Archivos de configuración de entorno
+.env
