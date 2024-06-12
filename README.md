@@ -28,7 +28,7 @@ Este proyecto contiene un script en Python para filtrar palabras clave Bing de u
         source venv/bin/activate
 
 
-4. Instala las dependencias necesarias (si las hubiera).
+4. Instala las dependencias necesarias con el comando 'pip install -r requirements.txt'
 5. Coloca tu archivo `keywords.csv` en el directorio raíz del proyecto.
 6. Ejecuta el script:
 
