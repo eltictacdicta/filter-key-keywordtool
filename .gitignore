@@ -7,3 +7,5 @@ keywords-filter.csv
 
 # Archivos de configuración de entorno
 .env
+
+__pycache__
