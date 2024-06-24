@@ -1,6 +1,6 @@
 # Filtrar Keywords
 
-Este proyecto contiene un script en Python para filtrar palabras clave de archivos CSV o Excel. El script elimina las comas de las palabras clave y filtra aquellas que tienen menos de 80 caracteres y menos de 10 palabras. Esto es para poderlas analizar con la herramienta keywordtool.io y poder sacar el CPC y la competencia. También se ha añadido una interfaz gráfica usando `tkinter` y la posibilidad de trabajar con archivos de `Ubersuggest`. Además, ahora se pueden importar palabras clave desde Google y Bing.
+Este proyecto contiene un script en Python para filtrar palabras clave de archivos CSV o Excel. El script elimina las comas de las palabras clave y filtra aquellas que tienen menos de 80 caracteres y menos de 10 palabras. Esto es para poderlas analizar con la herramientas como keywordtool.io y Ubersuggest. De esta forma poder sacar el CPC y la competencia. También se ha añadido una interfaz gráfica usando `tkinter` y la posibilidad de trabajar con archivos de `Ubersuggest`. Además, ahora se pueden importar palabras clave desde Google y Bing.
 
 ## Requisitos
 
@@ -38,7 +38,7 @@ Este proyecto contiene un script en Python para filtrar palabras clave de archiv
 5. Ejecuta el script:
 
     ```bash
-    python filter.py
+    python main.py
     ```
 
 6. Usa la interfaz gráfica para seleccionar el archivo que deseas filtrar.

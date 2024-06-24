@@ -9,3 +9,5 @@ keywords-filter.csv
 .env
 
 __pycache__
+
+venv
