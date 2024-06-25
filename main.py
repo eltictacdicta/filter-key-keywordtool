@@ -1,12 +1,12 @@
 import tkinter as tk
 from filter import open_filter_window
-from fusionar import open_fusionar_window_us
+from fusionar import fusionar
 
 def launch_filter():
     open_filter_window()
 
 def launch_fusionar():
-    open_fusionar_window_us()
+    fusionar()
 
 # Crear la ventana principal
 root = tk.Tk()

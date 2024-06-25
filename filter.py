@@ -12,9 +12,25 @@ def formatear_valor(valor):
     except ValueError:
         return valor
 
-def filtrar_keywords(input_file, output_file, search_engine, column_name='Palabra clave', posicion_column_name='Posición'):
+def formatear_ctr(valor):
+    try:
+        return f"{float(valor.replace('%', '')):.2f}"
+    except ValueError:
+        return valor
+
+def filtrar_keywords(input_file, output_file, search_engine):
     with open(input_file, mode='r', encoding='utf-8') as infile, open(output_file, mode='w', encoding='utf-8', newline='') as outfile:
         reader = csv.DictReader(infile)
+
+        if search_engine == "Google":
+            column_name = 'Consultas principales'
+            posicion_column_name = 'Posición'
+        elif search_engine == "Bing":
+            column_name = 'Palabra clave'
+            posicion_column_name = 'Posición media'
+        else:
+            messagebox.showerror("Error", "Fuente de búsqueda no soportada")
+            return
 
         if column_name not in reader.fieldnames:
             messagebox.showerror("Error", f"La columna '{column_name}' no se encontró en el archivo")
@@ -24,7 +40,7 @@ def filtrar_keywords(input_file, output_file, search_engine, column_name='Palabr
             messagebox.showerror("Error", f"La columna '{posicion_column_name}' no se encontró en el archivo")
             return
 
-        fieldnames = ['Palabra clave', 'Clics', 'Impresiones', 'CTR', 'Posición', 'Fuente']
+        fieldnames = ['Palabra clave', 'Impresiones', 'Clics', 'CTR', 'Posición']
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -37,11 +53,10 @@ def filtrar_keywords(input_file, output_file, search_engine, column_name='Palabr
                     ':' not in palabra_clave):
                     new_row = {
                         'Palabra clave': palabra_clave,
-                        'Clics': row.get('Clics', ''),
                         'Impresiones': row.get('Impresiones', ''),
-                        'CTR': formatear_valor(row.get('CTR', '')),
-                        'Posición': formatear_valor(row.get(posicion_column_name, '')),
-                        'Fuente': search_engine
+                        'Clics': row.get('Clics', ''),
+                        'CTR': formatear_ctr(row.get('CTR', '')),
+                        'Posición': formatear_valor(row.get(posicion_column_name, ''))
                     }
                     writer.writerow(new_row)
 
@@ -68,47 +83,35 @@ def open_filter_window():
 
         if not output_file:
             messagebox.showerror("Error", "Debe seleccionar una ubicación para guardar el archivo filtrado")
-            return filtrar_keywords(input_file, output_file, search_engine)
+            return
+        
+        filtrar_keywords(input_file, output_file, search_engine)
 
     app = tk.Toplevel()
     app.title('Filtrador de Keywords')
-    app.geometry('600x400')  # Establecer un tamaño fijo para la ventana
-    app.configure(bg='#f0f0f0')  # Color de fondo de la ventana
+    app.geometry('600x400')
+    app.configure(bg='#e0e0e0')
 
-    frame = tk.Frame(app, bg='#f0f0f0')
+    frame = tk.Frame(app, bg='#e0e0e0')
     frame.grid(row=0, column=0, padx=20, pady=20, sticky='nsew')
 
-    label_file_path = tk.Label(frame, text="Ruta del archivo CSV:", bg='#f0f0f0', fg='#333333')
-    label_file_path.grid(row=0, column=0, pady=5, sticky='w')
+    label_file_path = tk.Label(frame, text="Archivo CSV", bg='#e0e0e0')
+    entry_file_path = tk.Entry(frame, width=50)
+    button_browse = tk.Button(frame, text="Buscar", command=seleccionar_archivo)
+    label_search_engine = tk.Label(frame, text="Fuente de búsqueda", bg='#e0e0e0')
+    search_engine_var = tk.StringVar(value="Google")
+    search_engine_options = ["Google", "Bing", "Otros"]
+    dropdown_search_engine = tk.OptionMenu(frame, search_engine_var, *search_engine_options)
 
-    entry_file_path = tk.Entry(frame, width=60)
-    entry_file_path.grid(row=1, column=0, pady=5, padx=(0, 10), sticky='w')
+    button_process = tk.Button(frame, text="Procesar", command=procesar_archivo)
 
-    button_browse = tk.Button(frame, text="Buscar", command=seleccionar_archivo, bg='#4CAF50', fg='white')
-    button_browse.grid(row=1, column=1, pady=5, sticky='w')
+    label_file_path.grid(row=0, column=0, padx=5, pady=5)
+    entry_file_path.grid(row=0, column=1, padx=5, pady=5)
+    button_browse.grid(row=0, column=2, padx=5, pady=5)
 
-    frame_engine = tk.Frame(app, bg='#f0f0f0')
-    frame_engine.grid(row=1, column=0, padx=20, pady=20, sticky='nsew')
+    label_search_engine.grid(row=1, column=0, padx=5, pady=5)
+    dropdown_search_engine.grid(row=1, column=1, padx=5, pady=5)
 
-    label_search_engine = tk.Label(frame_engine, text="Motor de búsqueda:", bg='#f0f0f0', fg='#333333')
-    label_search_engine.grid(row=0, column=0, pady=5, sticky='w')
+    button_process.grid(row=2, column=0, columnspan=3, pady=20)
 
-    search_engine_var = tk.StringVar(value="Bing")
-    radio_bing = tk.Radiobutton(frame_engine, text="Bing", variable=search_engine_var, value="Bing", bg='#f0f0f0', fg='#333333')
-    radio_bing.grid(row=1, column=0, pady=5, padx=5, sticky='w')
-    radio_google = tk.Radiobutton(frame_engine, text="Google", variable=search_engine_var, value="Google", bg='#f0f0f0', fg='#333333')
-    radio_google.grid(row=1, column=1, pady=5, padx=5, sticky='w')
-
-    button_process = tk.Button(app, text="Enviar", command=procesar_archivo, bg='#4CAF50', fg='white')
-    button_process.grid(row=2, column=0, pady=20, sticky='s')
-
-    # Configurar el comportamiento de las filas y columnas para que se expandan con la ventana
-    app.grid_rowconfigure(0, weight=1)
-    app.grid_rowconfigure(1, weight=1)
-    app.grid_columnconfigure(0, weight=1)
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.withdraw()  # Ocultar la ventana raíz
-    open_filter_window()
-    root.mainloop()
+    app.mainloop()
