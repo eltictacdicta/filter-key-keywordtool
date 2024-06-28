@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pandas as pd
+from datetime import datetime
 
 def browse_file(entry_widget, file_type):
     if file_type == "csv":
@@ -20,7 +21,11 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
         
     try:
         bwmt_df = pd.read_csv(bwmt_file, delimiter=',', on_bad_lines='skip')
+        fuente = bwmt_df['Fuente'].iloc[0] if 'Fuente' in bwmt_df.columns else 'SinFuente'
         
+        merged_df = bwmt_df.copy()
+        herramienta = None
+
         if ubs_file:
             ubs_df = pd.read_csv(ubs_file, delimiter=',', on_bad_lines='skip')
             ubs_df.rename(columns={
@@ -33,9 +38,8 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
                 'SEO Difficulty': 'SEO Difficulty'
             }, inplace=True)
             ubs_df['CPC'] = ubs_df['CPC'].replace({'€': '', ',': '.'}, regex=True).astype(float)
-            
-            # Merge BWMT with Ubersuggest data
-            merged_df = pd.merge(bwmt_df, ubs_df, on='Palabra clave', how='outer')
+            merged_df = pd.merge(merged_df, ubs_df, on='Palabra clave', how='outer')
+            herramienta = 'Ubersuggest'
             
         if kwt_file:
             kwt_df = pd.read_excel(kwt_file, engine='openpyxl')
@@ -48,18 +52,19 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
             kwt_df['CPC'] = kwt_df['CPC'].replace({'€': '', ',': '.'}, regex=True).astype(float)
             kwt_df['Paid Difficulty'] = kwt_df['Competition']
             kwt_df['SEO Difficulty'] = pd.NA
-            
-            # Merge BWMT with KeywordTool.io data
-            merged_df = pd.merge(bwmt_df, kwt_df, on='Palabra clave', how='outer')
+            merged_df = pd.merge(merged_df, kwt_df, on='Palabra clave', how='outer')
+            herramienta = 'KeywordTool.io'
         
-        # Eliminar la columna 'No' si existe
         if 'No' in merged_df.columns:
             merged_df.drop(columns=['No'], inplace=True)
 
-        # Preguntar la ruta para guardar el archivo fusionado
-        save_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
+        merged_df['Herramienta'] = herramienta
 
-        # Guardar el DataFrame fusionado como CSV
+        fecha_actual = datetime.now().strftime("%Y%m%d")
+        save_path = filedialog.asksaveasfilename(defaultextension=".csv", 
+                                                 filetypes=[("CSV Files", "*.csv")],
+                                                 initialfile=f"{fuente}-{herramienta}-{fecha_actual}.csv")
+
         if save_path:
             merged_df.to_csv(save_path, index=False)
             messagebox.showinfo("Éxito", "Archivo fusionado guardado exitosamente.")
@@ -99,4 +104,3 @@ def fusionar():
 
 if __name__ == "__main__":
     fusionar()
-

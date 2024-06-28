@@ -40,7 +40,7 @@ def filtrar_keywords(input_file, output_file, search_engine):
             messagebox.showerror("Error", f"La columna '{posicion_column_name}' no se encontró en el archivo")
             return
 
-        fieldnames = ['Palabra clave', 'Impresiones', 'Clics', 'CTR', 'Posición']
+        fieldnames = ['Palabra clave', 'Impresiones', 'Clics', 'CTR', 'Posición', 'Fuente']
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -56,7 +56,8 @@ def filtrar_keywords(input_file, output_file, search_engine):
                         'Impresiones': row.get('Impresiones', ''),
                         'Clics': row.get('Clics', ''),
                         'CTR': formatear_ctr(row.get('CTR', '')),
-                        'Posición': formatear_valor(row.get(posicion_column_name, ''))
+                        'Posición': formatear_valor(row.get(posicion_column_name, '')),
+                        'Fuente': search_engine
                     }
                     writer.writerow(new_row)
 
@@ -115,3 +116,8 @@ def open_filter_window():
     button_process.grid(row=2, column=0, columnspan=3, pady=20)
 
     app.mainloop()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.withdraw()  # Ocultar la ventana principal de Tkinter
+    open_filter_window()
