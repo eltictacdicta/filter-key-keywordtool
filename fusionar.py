@@ -29,7 +29,6 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
         if ubs_file:
             ubs_df = pd.read_csv(ubs_file, delimiter=',', on_bad_lines='skip')
             ubs_df.rename(columns={
-                'No': 'No',
                 'Palabra clave': 'Palabra clave',
                 'Volumen de búsquedas': 'Volumen de búsquedas',
                 'CPC': 'CPC',
@@ -55,10 +54,11 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
             merged_df = pd.merge(merged_df, kwt_df, on='Palabra clave', how='outer')
             herramienta = 'KeywordTool.io'
         
-        if 'No' in merged_df.columns:
-            merged_df.drop(columns=['No'], inplace=True)
-
         merged_df['Herramienta'] = herramienta
+
+        # Seleccionar solo las columnas relevantes
+        columnas_relevantes = ['Palabra clave', 'Volumen de búsquedas', 'CPC', 'Competition', 'Paid Difficulty', 'SEO Difficulty', 'Fuente', 'Herramienta']
+        merged_df = merged_df[columnas_relevantes]
 
         fecha_actual = datetime.now().strftime("%Y%m%d")
         save_path = filedialog.asksaveasfilename(defaultextension=".csv", 
