@@ -57,7 +57,7 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
         merged_df['Herramienta'] = herramienta
 
         # Seleccionar solo las columnas relevantes
-        columnas_relevantes = ['Palabra clave', 'Volumen de búsquedas', 'CPC', 'Competition', 'Paid Difficulty', 'SEO Difficulty', 'Fuente', 'Herramienta']
+        columnas_relevantes = list(bwmt_df.columns) + ['CPC', 'Competition', 'Paid Difficulty', 'SEO Difficulty', 'Herramienta']
         merged_df = merged_df[columnas_relevantes]
 
         fecha_actual = datetime.now().strftime("%Y%m%d")
