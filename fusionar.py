@@ -20,14 +20,14 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
         return
         
     try:
-        bwmt_df = pd.read_csv(bwmt_file, delimiter=',', on_bad_lines='skip')
+        bwmt_df = pd.read_csv(bwmt_file, delimiter=',', on_bad_lines='skip', dtype={'Palabra clave': str})
         fuente = bwmt_df['Fuente'].iloc[0] if 'Fuente' in bwmt_df.columns else 'SinFuente'
         
         merged_df = bwmt_df.copy()
         herramienta = None
 
         if ubs_file:
-            ubs_df = pd.read_csv(ubs_file, delimiter=',', on_bad_lines='skip')
+            ubs_df = pd.read_csv(ubs_file, delimiter=',', on_bad_lines='skip', dtype={'Palabra clave': str})
             ubs_df.rename(columns={
                 'Palabra clave': 'Palabra clave',
                 'Volumen de búsquedas': 'Volumen de búsquedas',
@@ -41,7 +41,7 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
             herramienta = 'Ubersuggest'
             
         if kwt_file:
-            kwt_df = pd.read_excel(kwt_file, engine='openpyxl')
+            kwt_df = pd.read_excel(kwt_file, engine='openpyxl', dtype={'Keywords': str})
             kwt_df.rename(columns={
                 'Keywords': 'Palabra clave',
                 'Search Volume (Average)': 'Volumen de búsquedas',
@@ -57,7 +57,7 @@ def fusionar_datos(bwmt_file, ubs_file, kwt_file):
         merged_df['Herramienta'] = herramienta
 
         # Seleccionar solo las columnas relevantes
-        columnas_relevantes = list(bwmt_df.columns) + ['CPC', 'Competition', 'Paid Difficulty', 'SEO Difficulty', 'Herramienta']
+        columnas_relevantes = list(bwmt_df.columns) + ['Volumen de búsquedas', 'CPC', 'Competition', 'Paid Difficulty', 'SEO Difficulty', 'Herramienta']
         merged_df = merged_df[columnas_relevantes]
 
         fecha_actual = datetime.now().strftime("%Y%m%d")
